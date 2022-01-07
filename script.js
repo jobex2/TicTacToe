@@ -1,15 +1,20 @@
 
 //Stores board info, adds player choice to board, clears board, checks for winning conditions
 const gameBoard = (() => {
-    let board = ["X","X","O","0","0","X","X","O","X"];
+    let board = ["","","","","","","","",""]; // example of tie: ["X","X","O","O","O","X","X","O","X"]
+    const tiles = document.querySelectorAll(".tile");
 
     const addSelection = (selection, index) =>{
         board[index] = selection
-        console.table(board);
     };
     const clearBoard = () => {
         board = ["","","","","","","","",""];
-        console.log(board);
+        gameController.displayMessage("Player X goes first!")
+        if(gameController.turn() == "O")
+        {
+            gameController.turn();
+        }
+        buildBoard();
     };
     //returns true false or tie
     const checkWin = () => {    
@@ -32,17 +37,16 @@ const gameBoard = (() => {
             return true;
         }
         if(board[1] == board[4] && board[1] == board[7] && board[1] != '')
-        {
+        {  
             return true;
         }
         if(board[2] == board[5] && board[2] == board[8] && board[2] != '')
-        {
+        {     
             return true;
         }
         //checks for diagonal matches
         if(board[0] == board[4] && board[0] == board[8] && board[0] != '')
         {
-            console.log(true);
             return true;
         }
         if(board[2] == board[4] && board[2] == board[6] && board[2] != '')
@@ -50,48 +54,79 @@ const gameBoard = (() => {
             return true;
         }
         //checks for any unused tiles, if none, its a tie
-        if(!board.some(tile => tile == '')){
-            return console.log("tie");
+        if(!board.some(tile => tile == ''))
+        {
+            return "tie";
         }
     
-        else{
-            console.log(false);
+        else
+        {
             return false;
         } 
     };
-    return {addSelection, clearBoard, checkWin};
 
+    const buildBoard = () =>{
+        tiles.forEach((tile) => {
+            let index = tile.dataset.index;
+            tile.textContent = board[index];
+        });
+    }
+
+    return {addSelection, clearBoard, checkWin, buildBoard};
 
 })();
-
-gameBoard.checkWin();
-
 
 //Prompt actions, player chooses symbol/name, determines player's turn, 
 const gameController = (() => {
-    let XName = "";
-    let OName = "";
-    let playerTurn = 0;
+    let playerTurn = "X";
 
-    const name = (symbol, name) => {
-        if(symbol == "X"){
-            XName = name;
-        }
-        else{
-            OName = name;
-        }
-    };
     const turn = () => {
-        playerTurn = playerTurn ? 0: 1;
+        playerTurn = playerTurn == "X" ? "0": "X";
         return playerTurn;
     };
 
+    const displayMessage = (message) => {
+        const info = document.querySelector(".info");
+        info.textContent = message;
+    };
 
-    return{name, turn};
+    const tiles = document.querySelectorAll(".tile");
+    tiles.forEach((tile) => {
+        tile.addEventListener('click', () => {
+            if(tile.textContent != ''){
+                return;
+            }
+            let selection = tile.dataset.index;
+            if(playerTurn == 0){
+                gameBoard.addSelection("O", selection);
+                gameBoard.buildBoard();
+                if(gameBoard.checkWin() === true){
+                    displayMessage("Congrats O's win!");
+                    return;
+                }
+            }
+            else{
+                gameBoard.addSelection("X", selection);
+                gameBoard.buildBoard();
+                if(gameBoard.checkWin() === true){
+                    displayMessage("Congrats X's win!");
+                    return;
+                }
+            }
+            if(gameBoard.checkWin() === 'tie'){
+                displayMessage("It's a Tie!");
+                return;
+            }
+            turn();
+            displayMessage(`Player ${playerTurn}'s turn`)
+        })
+    });
+
+    return{turn, displayMessage};
 })();
 
-gameController.turn();
-
 const player = (name) => {
-
+    
 };
+
+gameBoard.buildBoard();

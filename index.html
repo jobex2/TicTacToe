@@ -8,7 +8,28 @@
     <link rel="stylesheet" href="style.css">
     <title>TicTacToe</title>
 </head>
-<body>
+<header class="header">
     <h1>Tic Tac Toe</h1>
+</header>
+<body>
+    <div class="flex-container">
+        <div class="info">Player X goes first!</div>
+    </div>
+    <div class="flex-container">
+        <div class="board">
+            <div class="tile" data-index="0">X</div>
+            <div class="tile" data-index="1">O</div>
+            <div class="tile" data-index="2">X</div>
+            <div class="tile" data-index="3">O</div>
+            <div class="tile" data-index="4">X</div>
+            <div class="tile" data-index="5">O</div>
+            <div class="tile" data-index="6">X</div>
+            <div class="tile" data-index="7">O</div>
+            <div class="tile" data-index="8">X</div>
+        </div>
+    </div>
+    <div class="flex-container">
+        <button onclick="gameBoard.clearBoard()">Clear</button>
+    </div>
 </body>
 </html>
